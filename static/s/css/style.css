@@ -1,0 +1,94 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f4f9;
+    color: #1e293b;
+}
+
+nav {
+    background: #172554;
+    color: white;
+    padding: 18px 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+nav h2 {
+    margin: 0;
+}
+
+nav form {
+    margin: 0;
+}
+
+main {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.auth-card {
+    background: white;
+    max-width: 420px;
+    margin: auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.auth-card h1 {
+    color: #172554;
+}
+
+label {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 7px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 18px;
+}
+
+.auth-card button {
+    width: 100%;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+a {
+    color: #2563eb;
+}
+
+.dashboard-card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-top: 25px;
+}
+
+.message {
+    background: #e0f2fe;
+    padding: 12px;
+    border-radius: 6px;
+}

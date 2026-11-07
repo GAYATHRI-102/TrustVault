@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard">
+    <h1>Hello, {{ current_user.name }}!</h1>
+
+    <p>Welcome to your TrustVault dashboard.</p>
+
+    <div class="dashboard-card">
+        <h3>Your Account</h3>
+        <p>Name: {{ current_user.name }}</p>
+        <p>Email: {{ current_user.email }}</p>
+        <p>Role: {{ current_user.role }}</p>
+    </div>
+
+    <h2>Secure Document Management</h2>
+    <p>Your document workspace will appear here.</p>
+</div>
+
+{% endblock %}
