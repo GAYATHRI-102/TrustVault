@@ -1,10 +1,16 @@
 
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
 from flask import Flask, redirect, url_for, render_template
-from flask_login import LoginManager, login_required, current_user
+from flask_login import (
+    LoginManager,
+    login_required,
+    current_user,
+    user_logged_in
+)
 from flask_wtf.csrf import CSRFProtect
 
 from config import Config
@@ -40,6 +46,23 @@ login_manager.login_view = "auth.login"
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
+
+
+# Promote the configured account to admin after login.
+@user_logged_in.connect_via(app)
+def promote_configured_admin(sender, user, **extra):
+
+    admin_email = os.environ.get(
+        "ADMIN_EMAIL", ""
+    ).strip().lower()
+
+    if (
+        admin_email
+        and user.email.strip().lower() == admin_email
+        and user.role != "admin"
+    ):
+        user.role = "admin"
+        db.session.commit()
 
 
 # Register application blueprints
