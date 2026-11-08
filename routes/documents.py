@@ -1,6 +1,9 @@
+
 import os
 import uuid
-import magic
+import puremagic
+import zipfile
+import io
 
 from flask import (
     Blueprint, render_template, request,
@@ -30,31 +33,58 @@ def allowed_file(filename):
         and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
 
+
 def validate_file_content(file):
     file.seek(0)
-
-    mime_type = magic.from_buffer(
-        file.read(2048),
-        mime=True
-    )
-
+    file_content = file.read()
     file.seek(0)
+
+    if not file_content:
+        return False
+
+    extension = file.filename.rsplit(".", 1)[1].lower()
+
+    # DOCX files are ZIP archives containing specific Word files.
+    if extension == "docx":
+        try:
+            with zipfile.ZipFile(io.BytesIO(file_content)) as docx:
+                names = docx.namelist()
+                return (
+                    "[Content_Types].xml" in names
+                    and "word/document.xml" in names
+                )
+        except (zipfile.BadZipFile, OSError):
+            return False
+
+    # Plain text files must contain valid UTF-8 text
+    # and must not contain binary null bytes.
+    if extension == "txt":
+        try:
+            return (
+                b"\x00" not in file_content
+                and bool(file_content.decode("utf-8"))
+            )
+        except UnicodeDecodeError:
+            return False
 
     allowed_mime_types = {
         "pdf": ["application/pdf"],
         "doc": ["application/msword"],
-        "docx": [
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        ],
-        "txt": ["text/plain"],
         "png": ["image/png"],
         "jpg": ["image/jpeg"],
         "jpeg": ["image/jpeg"]
     }
 
-    extension = file.filename.rsplit(".", 1)[1].lower()
+    try:
+        mime_type = puremagic.from_string(
+            file_content,
+            mime=True
+        )
+    except Exception:
+        return False
 
     return mime_type in allowed_mime_types.get(extension, [])
+
 
 def record_audit(action, document_id, details):
     log = AuditLog(
@@ -65,8 +95,6 @@ def record_audit(action, document_id, details):
     )
 
     db.session.add(log)
-
-
 
 
 @documents.route("/documents")
@@ -209,7 +237,6 @@ def upload_document():
     return render_template("upload.html")
 
 
-
 @documents.route("/documents/download/<int:document_id>")
 @login_required
 def download_document(document_id):
@@ -238,6 +265,7 @@ def download_document(document_id):
         as_attachment=True,
         download_name=document.original_name
     )
+
 
 @documents.route(
     "/documents/edit/<int:document_id>",
@@ -288,6 +316,7 @@ def edit_document(document_id):
         "edit_document.html",
         document=document
     )
+
 
 @documents.route("/documents/delete/<int:document_id>", methods=["POST"])
 @login_required
