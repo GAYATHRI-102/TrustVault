@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Edit Document</h2>
+
+<p>
+    <strong>Document:</strong>
+    {{ document.original_name }}
+</p>
+
+<form method="POST">
+
+    <input type="hidden"
+           name="csrf_token"
+           value="{{ csrf_token() }}">
+
+    <label>Category:</label>
+
+    <input type="text"
+           name="category"
+           value="{{ document.category }}"
+           required>
+
+    <br><br>
+
+    <button type="submit">
+        Save Changes
+    </button>
+
+</form>
+
+<br>
+
+<a href="{{ url_for('documents.document_list') }}">
+    Back to Documents
+</a>
+
+{% endblock %}

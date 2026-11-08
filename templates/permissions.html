@@ -1,0 +1,87 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Manage Document Permissions</h2>
+
+<h3>Document: {{ document.original_name }}</h3>
+
+<hr>
+
+<h3>Share Document</h3>
+
+<form method="POST" action="{{ url_for('permissions.grant_permission', document_id=document.id) }}">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <label>Recipient Email:</label>
+    <input type="email" name="email" placeholder="Enter registered user's email" required>
+
+    <br><br>
+
+    <label>Select Permission:</label>
+
+    <select name="access_type" required>
+        <option value="read">Read Access</option>
+        <option value="edit">Edit Access</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Grant Access</button>
+
+</form>
+
+<hr>
+
+<h3>Users With Access</h3>
+
+{% if shared_permissions %}
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Email</th>
+        <th>Permission</th>
+        <th>Action</th>
+    </tr>
+
+    {% for permission in shared_permissions %}
+    <tr>
+        <td>{{ permission.user.email if permission.user else "Unknown user" }}</td>
+
+        <td>
+            {% if permission.can_edit %}
+                Edit
+            {% elif permission.can_read %}
+                Read
+            {% endif %}
+        </td>
+
+        <td>
+            <form method="POST"
+                  action="{{ url_for('permissions.revoke_permission',
+                  document_id=document.id,
+                  permission_id=permission.id) }}">
+
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <button type="submit">Revoke Access</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>No users have access to this document yet.</p>
+
+{% endif %}
+
+<br>
+
+<a href="{{ url_for('documents.document_list') }}">Back to My Documents</a>
+
+{% endblock %}

@@ -3,5 +3,6 @@ Flask-SQLAlchemy
 Flask-Login
 Flask-WTF
 python-dotenv
+python-magic
 pytest
 gunicorn

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="auth-card">
+    <h1>Upload Document</h1>
+
+    <form method="POST"
+          enctype="multipart/form-data">
+
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}">
+
+        <label>Choose Document</label>
+
+        <input type="file"
+               name="file"
+               accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
+               required>
+
+        <label>Category</label>
+
+        <select name="category">
+            <option value="General">General</option>
+            <option value="Personal">Personal</option>
+            <option value="Academic">Academic</option>
+            <option value="Financial">Financial</option>
+            <option value="Work">Work</option>
+        </select>
+
+        <button type="submit">Upload Document</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -12,6 +12,17 @@
         <p>Name: {{ current_user.name }}</p>
         <p>Email: {{ current_user.email }}</p>
         <p>Role: {{ current_user.role }}</p>
+        <p>
+            <a href="{{ url_for('documents.document_list') }}">
+            Manage My Documents
+            </a>
+        </p>
+
+        <p>
+            <a href="{{ url_for('documents.upload_document') }}">
+            Upload New Document
+            </a>
+        </p>
     </div>
 
     <h2>Secure Document Management</h2>

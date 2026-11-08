@@ -1,0 +1,198 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>My Documents</h1>
+
+<p>
+    <a href="{{ url_for('documents.upload_document') }}">
+        Upload New Document
+    </a>
+</p>
+
+<hr>
+
+<h2>Search Documents</h2>
+
+<form method="GET" action="{{ url_for('documents.document_list') }}">
+
+    <label>Document Name:</label>
+    <input
+        type="text"
+        name="name"
+        placeholder="Search by document name"
+        value="{{ search_name or '' }}"
+    >
+
+    <br><br>
+
+    <label>Owner Name:</label>
+    <input
+        type="text"
+        name="owner"
+        placeholder="Search by owner name"
+        value="{{ search_owner or '' }}"
+    >
+
+    <br><br>
+
+    <label>Category:</label>
+    <input
+        type="text"
+        name="category"
+        placeholder="Search by category"
+        value="{{ search_category or '' }}"
+    >
+
+    <br><br>
+
+    <label>Upload Date:</label>
+    <input
+        type="date"
+        name="date"
+        value="{{ search_date or '' }}"
+    >
+
+    <br><br>
+
+    <button type="submit">Search</button>
+
+    <a href="{{ url_for('documents.document_list') }}">
+        Clear Filters
+    </a>
+
+</form>
+
+<hr>
+
+<h2>Document List</h2>
+
+{% if documents %}
+
+<table border="1" cellpadding="10">
+
+    <thead>
+        <tr>
+            <th>Document Name</th>
+            <th>Owner</th>
+            <th>Category</th>
+            <th>Uploaded On</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for document in documents %}
+
+        <tr>
+
+            <td>{{ document.original_name }}</td>
+
+            <td>{{ document.owner.name }}</td>
+
+            <td>{{ document.category }}</td>
+
+            <td>
+                {{ document.created_at.strftime('%d-%m-%Y') }}
+            </td>
+
+            <td>
+
+                <a href="{{ url_for(
+                    'documents.download_document',
+                    document_id=document.id
+                ) }}">
+                    Download
+                </a>
+
+                {% if document.owner_id == current_user.id %}
+
+                    <br><br>
+
+                    <a href="{{ url_for(
+                        'documents.edit_document',
+                        document_id=document.id
+                    ) }}">
+                        Edit Category
+                    </a>
+
+                    <br><br>
+
+                    <a href="{{ url_for(
+                        'permissions.manage_permissions',
+                        document_id=document.id
+                    ) }}">
+                        Manage Permissions
+                    </a>
+
+                    <br><br>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'documents.delete_document',
+                            document_id=document.id
+                        ) }}"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <button type="submit">
+                            Delete
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    {% set permission = namespace(can_edit=false) %}
+
+                    {% for shared_permission in document.shared_permissions %}
+
+                        {% if shared_permission.user_id == current_user.id
+                              and shared_permission.can_edit %}
+
+                            {% set permission.can_edit = true %}
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {% if permission.can_edit %}
+
+                        <br><br>
+
+                        <a href="{{ url_for(
+                            'documents.edit_document',
+                            document_id=document.id
+                        ) }}">
+                            Edit Category
+                        </a>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% else %}
+
+    <p>No documents found matching your search.</p>
+
+{% endif %}
+
+{% endblock %}
