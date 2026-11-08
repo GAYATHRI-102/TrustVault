@@ -191,7 +191,7 @@ Production deployment and additional security hardening remain necessary before 
 
 TrustVault supports role-based access control with separate Admin and Viewer accounts.
 
-- **Admin:** The account registered using the configured `ADMIN_EMAIL` environment variable. The admin can access the audit logs at `/admin/audit-logs`.
+- **Admin:** The account registered using the configured `ADMIN_EMAIL` environment variable and value is gayathridevigudipudi@gmail.com. The admin can access the audit logs at `/admin/audit-logs`.
 - **Viewer:** A normal registered account with document access based on permissions granted by the document owner.
 
 To evaluate the audit logging functionality, please log in using the Admin account and visit:
