@@ -186,3 +186,14 @@ TrustVault has implemented its core authentication, document management, permiss
 The application has passed 11 automated tests in the development environment.
 
 Production deployment and additional security hardening remain necessary before using the application for sensitive real-world documents.
+
+### Demo Login Instructions
+
+TrustVault supports role-based access control with separate Admin and Viewer accounts.
+
+- **Admin:** The account registered using the configured `ADMIN_EMAIL` environment variable. The admin can access the audit logs at `/admin/audit-logs`.
+- **Viewer:** A normal registered account with document access based on permissions granted by the document owner.
+
+To evaluate the audit logging functionality, please log in using the Admin account and visit:
+
+https://trustvault-3-kbf2.onrender.com/admin/audit-logs
